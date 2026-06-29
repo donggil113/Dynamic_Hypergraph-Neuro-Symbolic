@@ -1,7 +1,7 @@
 # G1 — Method & Knowledge-Base Specification (Design Doc)
 
 **Project:** Neuro-Symbolic Open-Set / Few-Shot RF Emitter Recognition (Paper P2)
-**Status:** DRAFT — awaiting author (Eagle) sign-off. **No code is written against this spec until approved.**
+**Status:** ✅ SIGNED OFF by author (Eagle), 2026-06-29 — see §10 sign-off log. Method is approved; all `[VERIFY@G0]` items are deferred to the G0 data audit (run when the dataset path is provided). **No pipeline code until G0 reconciles those items.**
 **Gate:** G1 (Method & KB spec). Precedes G2 (pipeline + smoke test).
 **Framing:** ML / signal-processing (target IEEE TCCN or Expert Systems with Applications). We deliberately use generic *RF emitter recognition / spectrum-awareness* language and avoid threat/EW framing.
 
@@ -200,15 +200,17 @@ kb: kb.yaml
 
 ---
 
-## 8. Open questions requiring author sign-off
+## 8. Open questions — author decisions (resolved at sign-off)
 
-1. **[VERIFY@G0]** Does OpenEW-SA carry **per-attribute** labels, or only family labels? (Determines whether attribute supervision / concept-bottleneck is even possible.)
-2. **[VERIFY@G0]** Exact taxonomies for A3 (PRI-mod), A5 (scan), A6 (intra-pulse) as labelled in the data — my proposed value lists are conventions, not the dataset's.
-3. **[VERIFY@G0]** Input representation: PDW sequences, raw IQ, or time–frequency images?
-4. **[VERIFY@G0]** Are multifunction emitters labelled at the **mode** level or emitter level?
-5. **Family→attribute signatures:** author-supplied rule table, or data-induced + your review? (I will not invent these.)
-6. **Novelty splits:** do the OpenEW-SA open-set hold-outs already separate unseen-mode / unseen-recombination / true-OOD, or must we construct these splits? (Needed for §3.2 breakdown.)
-7. **Repo-name discrepancy:** the repository is named *Dynamic_Hypergraph*-Neuro-Symbolic, but the P2 brief specifies an **LTN** symbolic layer with no hypergraph component. Is a dynamic-hypergraph representation an intended part of this method (e.g. for the symbolic layer or emitter relations), or is the name a carry-over? This materially affects the architecture and must be resolved before coding.
+Author answers recorded 2026-06-29. Items 1–4, 6 are **deferred to G0** (audit the real data, do not assume); items 5, 7 are **resolved now**.
+
+1. **Per-attribute vs family-only labels — DEFER TO G0.** Unknown; this is *the* pivotal G0 finding. Audit and report what labels actually exist. If only family labels exist, flag it loudly — concept-bottleneck / direct attribute supervision may be impossible and the method (§4 axiom 1) must be revised. Do **not** assume either way. **[VERIFY@G0]**
+2. **Taxonomies for A3/A5/A6 — DEFER TO G0.** The §1 value lists are a *starting convention only*. Reconcile against the data's actual labels; **report mismatches explicitly, do not silently force the data into the convention.** **[VERIFY@G0]**
+3. **Input representation — DEFER TO G0.** Report available formats. Author preference *if available*: **PDW sequences** (map most naturally to PRI/PW/scan attribute grounding). Confirm against real data before committing the backbone. **[VERIFY@G0]**
+4. **Multifunction labelling (mode vs emitter level) — DEFER TO G0.** Report what the data provides. **[VERIFY@G0]**
+5. **Family→attribute signatures — RESOLVED.** Do **NOT** hand-write or invent. **Induce candidate signatures from the TRAINING split only**, present as a *draft* table for author review/correction. Keep **induced** vs **author-confirmed** strictly separated in `kb.yaml` (the `provenance` field, §2.4).
+6. **Novelty splits — DEFER TO G0.** Determine whether OpenEW-SA hold-outs already separate unseen-mode / unseen-recombination / true-OOD, or whether we must construct them. **[VERIFY@G0]**
+7. **Hypergraph — RESOLVED: NOT part of P2.** The repo name `Dynamic_Hypergraph-Neuro-Symbolic` is a **carry-over**. P2 is **neural attribute grounding + LTN symbolic layer ONLY**. The dynamic-hypergraph component belongs to a **separate later paper (P3)** and must **not** appear in this architecture. Keep P2 exactly as the brief specifies.
 
 ---
 
@@ -217,4 +219,12 @@ kb: kb.yaml
 - Threshold values (calibrated on real validation data, logged).
 - Whether to freeze vs. fine-tune the front-end (empirical, G3) — design *supports* freezing for few-shot.
 
-**Next action after sign-off:** proceed to **G0 data audit** the moment the dataset path is provided, reconcile every **[VERIFY@G0]** item, then G2 (pipeline + closed-set smoke test). No coding against this spec until items 1–7 above are answered.
+**Next action:** proceed to **G0 data audit** the moment the dataset path is provided (see `docs/G0_data_audit_plan.md`), reconcile every **[VERIFY@G0]** item, then G2 (pipeline + closed-set smoke test). No pipeline code until items 1–4, 6 are answered against the real data.
+
+---
+
+## 10. Sign-off log
+
+| Date | Author | Decision |
+|------|--------|----------|
+| 2026-06-29 | Eagle | G1 method approved. P2 = neural attribute grounding + LTN only; **no hypergraph** (item 7). Family signatures **induced from training split + author review**, induced/confirmed kept separate (item 5). Items 1–4, 6 deferred to G0 — audit real data, do not invent semantics. Preference: PDW input if available. Hold all data-dependent work at G0 until dataset path provided. |
