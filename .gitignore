@@ -1,0 +1,26 @@
+# Data — never committed; provided via external path (see docs/G0_data_audit.md)
+/data/*
+!/data/.gitkeep
+!/data/README.md
+
+# Experiment outputs (logged runs, figures, checkpoints)
+/runs/
+/outputs/
+*.ckpt
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
